@@ -1,9 +1,32 @@
 ﻿@page "/"
+@using Sample.Models;
+@using Sample.ViewModels;
+@using ReactiveUI;
+@inject ISnackbar Snackbar
 
 <PageTitle>Index</PageTitle>
 
-<h1>Hello, world!</h1>
+<MudTable Items="@ViewModel.Players" 
+          Dense="true" 
+          Hover="true" 
+          CanCancelEdit="false"          
+          OnCommitEditClick="@(() => Snackbar.Add("Saving"))"
+          RowEditCommit="OnRowEditCommit"                    
+          bind-SelectedItem="@ViewModel.SelectedPlayer">
+</MudTable>
 
-Welcome to your new app.
+@code {
+    PlayerViewModel ViewModel { get; set; }
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+    protected override void OnInitialized()
+    {
+        ViewModel = new PlayerViewModel();
+    }
+
+    private void OnRowEditCommit(dynamic element)
+    {
+        Console.WriteLine(ViewModel);
+        Console.WriteLine($"{element.Name} {element.Sales}");        
+        StateHasChanged();            
+    }
+}
